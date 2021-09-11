@@ -1,0 +1,209 @@
+<!doctype html>
+<!--http://www.w3schools.com/jquery/tryit.asp?filename=tryjquery_event_which   for keypress-->
+<html>
+<head>
+  <title>Space project</title>
+  <script src="js/jquery-1.9.1.js"></script>
+  <script src="js/jquery-ui.js"></script>
+  <script src="js/jquery.domline.js"></script>
+  <script src="js/dragger.js"></script>
+  <script src="js/jquery.easing.1.3.js"></script>
+  <script src="js/accordion script.js"></script>
+  <script src="js/variable.js"></script>
+  <script src="js/compile.js"></script>
+  <script src="js/jcompile.js"></script>
+  <script src="js/touch.js"></script>
+  <script src="js/jquery.mobile.custom.min.js"></script>
+
+  <link rel="stylesheet" href="css/accordion css.css" type="text/css" />
+  <link rel="stylesheet" href="css/css.css" type="text/css">
+</head>
+<body >
+
+
+<div style="clear: both; text-align:left;"> <img src="css/img/space1.png" width="20%" style="margin-left: 3%"/>  </div>
+<div class="main">
+
+<div class="left" style="width: 66%;height: 100%">
+
+    <div class="left" style="width: 33%;height: 100%">
+
+    <ul class="container">
+      <li class="menu">
+
+          <ul>
+		    <li class="button"><a href="#" class="green">Commands <span></span></a></li>
+
+            <li class="dropdown">
+            <!--<div class="nkeyp draggable keypress command">key press<select name="keypress" class="kpval">
+            <option value="65">a</option>
+            <option value="66">b</option>
+            <option value="67">c</option>
+            <option value="68">d</option>
+            <option value="69">e</option>
+            <option value="70">f</option>
+            <option value="71">g</option>
+            <option value="72">h</option>
+            <option value="73">i</option>
+            <option value="74">j</option>
+            <option value="75">k</option>
+            <option value="76">l</option>
+            <option value="77">m</option>
+            <option value="78">n</option>
+            <option value="79">o</option>
+            <option value="80">p</option>
+            <option value="81">q</option>
+            <option value="82">r</option>
+            <option value="83">s</option>
+            <option value="84">t</option>
+            <option value="85">u</option>
+            <option value="86">v</option>
+            <option value="87">w</option>
+            <option value="88">x</option>
+            <option value="89">y</option>
+            <option value="90">z</option>
+            <option value="48">1</option>
+            <option value="49">2</option>
+            <option value="50">3</option>
+            <option value="51">4</option>
+            <option value="52">5</option>
+            <option value="53">6</option>
+            <option value="54">7</option>
+            <option value="55">8</option>
+            <option value="56">9</option>
+            <option value="27">ESC</option>
+            <option value="32">space</option>
+            <option value="9">tab</option>
+            <option value="20">CAPS</option>
+            <option value="16">shift</option>
+            <option value="17">ctrl</option>
+            <option value="18">alt</option>
+            <option value="13">enter</option>
+            <option value="37">left</option>
+            <option value="38">up</option>
+            <option value="39">right</option>
+            <option value="40">down</option>
+            <option value="96">num-0</option>
+            <option value="97">num-1</option>
+            <option value="98">num-2</option>
+            <option value="99">num-3</option>
+            <option value="100">num-4</option>
+            <option value="101">num-5</option>
+            <option value="102">num-6</option>
+            <option value="103">num-7</option>
+            <option value="104">num-8</option>
+            <option value="105">num-9</option>
+            </select></div>-->
+            <div class="draggable nfor for command">repeat <input type="text" class="text"></div>
+            <div class="draggable if nfor command">if <input type="text" class="iftext"  disabled="disabled"></div>
+           <!-- <div class="draggable delay command">delay <input type="text" class="text" ></div>-->
+            <div class="draggable while nfor command">while <input type="text" class="iftext"  disabled="disabled"></div>
+            <div class="draggable print command">print <input type="text" class="text" ></div>
+            <div class="draggable newl command">new line</div>
+            <div class="draggable space command">space</div>
+            <div class="draggable input command">input <select name="input" class="input"></select></div>
+            <div class="draggable end command">end</div>
+           <!-- <div class="draggable cls command">clear screen</div>-->
+            <div class="draggable let command">let <select name="let" class="lets"></select><span class="equal">=</span> <input type="text" class="text" ></div>
+
+
+            </li>
+
+          </ul>
+
+      </li>
+
+      <li class="menu">
+
+          <ul>
+		    <li class="button"><a href="#" class="blue">Operators <span></span></a></li>
+
+            <li class="dropdown">
+
+            <div class="operator all "><input type="text" class="text" ><span class="plus"> + </span> <input type="text" class="text"></div><br>
+            <div class="operator all"><input type="text" class="text"> <span class="minus"> - </span> <input type="text" class="text"></div><br>
+            <div class="operator all"><input type="text" class="text">  <span class=" division"> / </span> <input type="text" class="text"></div><br>
+            <div class="operator all"><input type="text" class="text"> <span class="multiplication"> * </span> <input type="text" class="text"></div><br>
+            <div class="operator all" title="remainder"><input type="text" class="text"> <span class="mod"> mod </span> <input type="text" class="text"></div><br>
+            <div class="operator iif"><input type="text" class="text"> <span class="bigger"> &gt; </span> <input type="text" class="text"></div><br>
+            <div class="operator iif"> <input type="text" class="text"> <span class="smaller"> &lt; </span> <input type="text" class="text"> </div><br>
+            <div class="operator iif"><input type="text" class="text"> <span class="equel"> = </span> <input type="text" class="text"></div><br>
+            <div class="operator iif"><input type="text" class="text"> <span class="not"> != </span> <input type="text" class="text"></div><br>
+            <div class="operator iif"> <input type="text" class="text"> <span class="biggerequel"> &gt;= </span> <input type="text" class="text"></div><br>
+            <div class="operator iif"><input type="text" class="text"> <span class="smmalerequel"> &lt;= </span> <input type="text" class="text"></div><br>
+            <div class="operator all" title="Power"><span class=" power"> pow </span><span class="popen">(</span><input type="text" class="text"><span class="comma">^</span> <input type="text" class="text"><span class="pclose">)</span></div><br>
+            <div class="operator all" title="AbsoluteValue"><span class="abs"> abs </span><span class="popen">(</span><input type="text" class="text"><span class="pclose">)</span></div><br>
+            <div class="operator all" title="Squere"><span class="sqrt"> sqrt </span> <span class="popen">(</span><input type="text" class="text"><span class="pclose">)</span></div><br>
+            <div class="operator all"><span class="round">round </span> <span class="popen">(</span><input type="text" class="text"><span class="pclose">)</span></div><br>
+            <div class="operator all"  title="Randomize"><span class="rand">rand </span><span class="popen">(</span><input type="text" class="text"><span class="comma">,</span> <input type="text" class="text"><span class="pclose">)</span></div><br>
+            <div class="operator iif"> <input  type="text" class="iftext" disabled="disabled"> <span class="and"> and </span> <input type="text" class="iftext"  disabled="disabled"></div><br>
+            <div class="operator iif"> <input type="text" class="iftext"  disabled="disabled"> <span class=" or"> or </span> <input type="text" class="iftext"  disabled="disabled"></div><br>
+
+			</li>
+
+          </ul>
+
+      </li>
+
+
+      <li class="menu">
+
+          <ul>
+		    <li class="button"><a href="#" class="red">Variable <span></span></a></li>
+
+            <li class="dropdown var">
+            <div class="variable make">type:<select  name="type" class="type">
+            <option value="int">Integer</option>
+            <option value="str">String</option>
+            <option value="float">Float</option>
+            </select> <br> name:<input type="text" class="maketextbox"> <br>
+            <button class="vmake">make</button>
+            </div>
+            <div class="variable delete">
+            <select name="delete" class="typedelete">
+            </select><br>
+            <button class="vdelete">delete</button>
+            </div>
+            <div class="variable">Integer:<div class="all operator varr">&nbsp;<select class="vvarr int"></select>&nbsp;</div></div>
+            <div class="variable">String:<div class="all operator varr">&nbsp;<select class="vvarr str"></select>&nbsp;</div></div>
+            <div class="variable">Float:<div class="all operator varr">&nbsp;<select class="vvarr float"></select>&nbsp;</div></div>
+            </li>
+
+          </ul>
+
+      </li>
+  </ul>
+
+<div class="clear"></div>
+
+</div>
+<div class="right" style="width: 66%">
+    <div class="sortable"  onscroll="line_drawer()" ondrop="var t=setTimeout(function(){tab()},750);">
+    <div class="bin right" >
+    </div>
+    </div>
+
+</div>
+</div>
+<div class="right" style="width: 25%;height: 100% ;  " >
+   <!-- <input id="res" style="width: 60px; height: 24px ;" type="submit" class="check" value="Compile" >-->
+  <div class="result"  hidden="hidden">
+
+  </div>
+
+    <div class="codepad" >
+    <form action="run.php" method="post" target="Rifrm" onsubmit="return jcompile();">
+    <textarea class="jscode"  name="jscode" hidden="hidden"></textarea>
+    <textarea class="jtmake"  name="tmake" hidden="hidden"></textarea>
+    <textarea class="jupdate"  name="update" hidden="hidden"></textarea>
+    <input type="submit" value="Run" id="JRun" />
+    </form>
+     <div class="jresult"  hidden="hidden"></div>
+     <iframe name="Rifrm" width="90%" frameborder="0"></iframe>
+    </div>
+</div>
+</div>
+<div style="clear: both; text-align: center; padding-top: 5px;;">All Right reserved by MR.Osouli and Farbod Esmaeili &copy;&reg; 2013 Tehran,Iran<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+
+</body>
+</html>

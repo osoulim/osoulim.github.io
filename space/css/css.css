@@ -1,0 +1,163 @@
+.tab{
+  background-color:#00AA00;
+  width : 20px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#Run,#JRun{
+  width: 40px;
+
+}
+
+.codepad{
+  background-color:#505B69;
+  position: relative;
+  width: 100%;
+  padding: 5px;
+  min-height: 100px;
+  border-radius: 10px;
+  overflow:hidden;
+  text-align:center;
+  margin-bottom: 15px;
+
+}
+
+.codepad::-webkit-scrollbar {
+    display: none;
+    }
+
+select{
+  height:20px ;
+}
+
+.draggable {
+ cursor:move;
+ margin-bottom: 10px;
+ margin-left: 10px;
+ border-radius: 3px;
+ width: fit-content;
+ display: table;
+ clear: both;
+ height: auto;
+ }
+ .iftext{
+    width: 15px;
+    border-radius: 5px;
+ }
+ .text{
+    width: 15px;
+    border-radius: 5px;
+  }
+  .hover
+  {
+    background-color: #757575;
+
+  }
+  .thover{
+    background-color: #BBBBBB;
+  }
+
+.panel,.flip
+{
+width : 99%;
+padding:5px;
+text-align:center;
+color: #5858A7;
+background-color:#999999;
+border:solid 1px #c3c3c3;
+border-radius: 5px;
+font-size: 20px;
+margin-top: 5px;
+}
+.panel
+{
+background-color:#e5eecc;
+padding:5px;
+}
+
+.sortable{
+  padding-top:10px;
+  background-color:#999999;
+  position: relative;
+  width: 100%;
+  min-height: 100px;
+  border-radius: 10px;
+  overflow:auto;
+}
+.bin{
+  margin: 10px;
+  padding: 5px;
+  background-color:#999999;
+  background-size: contain;
+  position: relative;
+  width: 10%;
+  min-height: 10%;
+}
+.bind{
+  margin: 10px;
+  padding: 5px;
+  background:url(img/trash.jpg);
+  background-size: contain;
+  position: relative;
+  width: 50%;
+  min-height: 10%;
+  background-repeat: no-repeat;
+}
+
+.right{
+  float: right;
+  
+}
+.left{
+  float: left;
+}
+.main{
+  width: 90%;
+  height: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 5%;
+  clear: both;
+}
+.command{
+  background-color:#00AA00;
+  font-size: medium;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.motion{
+    background-color:#FF6600;
+    font-size: medium;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.variable{
+  background-color:#FF0000;
+  font-size: medium;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-bottom: 10px;
+ margin-left: 10px;
+ border-radius: 3px;
+ width: fit-content;
+ display: table;
+ clear: both;
+ height: auto;
+}
+.operator{
+  background-color:#5555FF;
+    font-size: medium;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: inline-table;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    border-radius: 3px;
+    cursor:move;
+}
+
+.maketextbox{
+    width: 45px;
+    border-radius: 5px;
+}
