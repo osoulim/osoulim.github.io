@@ -12,13 +12,24 @@
 
 <div id="stackedbars">
     <h1>Greenness of Different days</h1>
+    <label style="margin-left: 20px">
+        Select Farm and year:
+        <select onchange="renderPlot()" id="farmSelector" autofocus>
+            <option value="first-2019"> First-2019</option>
+            <option value="first-2020"> First-2020</option>
+            <option value="second-2019"> Second-2019</option>
+            <option value="second-2020"> Second-2020</option>
+            <option value="third-2019"> Third-2019</option>
+            <option value="third-2020"> Third-2020</option>
+        </select>
+    </label>
     <svg id="stacked" width="1900" height="700"></svg></div>
-    <div class="row align-items-center">
-        <div class="col-sm"><div id="slider-range"></div></div>
-    </div>
+<!--    <div class="row align-items-center">-->
+<!--        <div class="col-sm"><div id="slider-range"></div></div>-->
+<!--    </div>-->
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="https://unpkg.com/d3-simple-slider"></script>
+<!--<script src="https://unpkg.com/d3-simple-slider"></script>-->
 
 <link
         rel="stylesheet"
@@ -28,12 +39,15 @@
 />
 
 <script>
-
+  const colors = ["green3", "green2", "green1", "green0"];
   // this section sets up the svg, margin, width and height
-
+  renderPlot();
   function renderPlot() {
-    var svg = d3.select("#stacked"),
-        margin = {top: 20, right: 180, bottom: 80, left: 40},
+    const selectedFarm = document.getElementById("farmSelector").value;
+    const [farm, year] = selectedFarm.split('-');
+    let svg = d3.select("#stacked");
+    svg.selectAll("*").remove();
+    let margin = {top: 20, right: 180, bottom: 80, left: 40},
         // sometimes width & height are defined separately here. Width and height are the overall
         // dimensions that area alloted for the vix. The svg dimensions can be thought of as the
         // area within the axes. Therefore the margins are used to make room for the axis text and
@@ -43,6 +57,7 @@
         // this line moves the svg to the right and down from the origin (remember it's in the top
         // left)
         g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 
     //scaleBand (https://github.com/d3/d3-scale#scaleBand) and rangeRound are used for categorical charts, like bar charts
     // rangeRound will take the number of categories to be displayed on the x-axis as input and
@@ -64,7 +79,7 @@
     // and each assigned on the the colors from schemeCategory20
     // to assign custom colors,  remove the schemeCategory20 and un-comment the range with your
     // own colors
-    var z = d3.scaleOrdinal().range(['#69B34C','#FAB733', '#FF4E11']);
+    var z = d3.scaleOrdinal().range(['#397A4C', '#569358', '#77C063','#BEDB92']);
     // .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
     //(https://github.com/d3/d3-shape/blob/master/README.md#stack)
@@ -75,18 +90,23 @@
     var stack = d3.stack();
 
     // this is where the data is loaded, given the name "data" and checked for errors
-    d3.csv("result.csv", type, function(error, data) {
+    d3.csv(`${farm}.csv`, type, function(error, data) {
       if (error) {throw error;}
 
       data = data.sort((a, b) => a.date < b.date ? -1 : 1);
 
-      data17 = data.filter(d => d.date.startsWith("2017"));
-      data18 = data.filter(d => d.date.startsWith("2018"));
-      data19 = data.filter(d => d.date.startsWith("2019"));
-      data20 = data.filter(d => d.date.startsWith("2020"));
-      data21 = data.filter(d => d.date.startsWith("2021"));
+      console.log(data);
 
-      data = data19.slice(0);
+      const years = {
+        2017: data.filter(d => d.date.startsWith("2017")),
+        2018: data.filter(d => d.date.startsWith("2018")),
+        2019: data.filter(d => d.date.startsWith("2019")),
+        2020: data.filter(d => d.date.startsWith("2020")),
+        2021: data.filter(d => d.date.startsWith("2021")),
+      };
+      console.log(years);
+
+      data = years[year].slice(0).filter(d => d.greenAll);
 
 // this takes the total (calculated later) of each category and sorts the categories
 // from greatest to smallest. This orders the bars biggest to smallest (left to right)
@@ -103,50 +123,14 @@
 
 // this removes the first column from the data, which is the ethnicity name column because
 // that shouldn't have it's own color, but each of the other columns should
-      z.domain(["green","orange", "red"]);
+      z.domain(colors);
       // console.log("cols", data.columns);
-
-      let tooltip = d3.select("#stackedbars")
-          .append("div")
-          .style("opacity", 0)
-          .attr("class", "tooltip")
-          .style("background-color", "white")
-          .style("border", "solid")
-          .style("border-width", "1px")
-          .style("border-radius", "5px")
-          .style("padding", "10px")
-          .style("position", "absolute");
-
-      // Three function that change the tooltip when user hover / move / leave a cell
-      let mouseover = function(d) {
-        // console.log(d);
-        tooltip
-            .html(
-                `<b>${d.data.date}</b> <br>` +
-                `Green: ${d.data.green} <br>` +
-                `Orange: ${d.data.orange} <br>` +
-                `Red: ${d.data.red} <br>` +
-                `<img src="${d.data.filename.slice(2)}" alt="NDVI image" />`)
-            .style("opacity", 1)
-      };
-      let mousemove = function() {
-        tooltip
-            .style("left", (d3.mouse(this)[0]+90) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-            .style("top", (d3.mouse(this)[1]+90) + "px")
-      };
-      let mouseleave = function() {
-        tooltip
-            .style("opacity", 0)
-      };
-
-
-
 
 // this is setting up the age series
       g.selectAll(".serie")
           //the keys for the stack are the columns minus the first column, which is removed
           //using the "slice" method
-          .data(stack.keys(["green", "orange", "red"])(data))
+          .data(stack.keys(colors)(data))
           // each age series is given it's own g
           .enter().append("g")
           .attr("class", "serie")
@@ -201,7 +185,7 @@
           // the legend is made starting with the first column and working physically down from there.
           // the .reverse is needed to put the 71+ at the top of the legend like it is in the graphic
           // this pulls the column names minus the first column
-          .data(["green","orange", "red"])
+          .data(colors.slice().reverse())
           .enter().append("g")
           .attr("class", "legend")
           .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
@@ -219,70 +203,65 @@
           .attr("y", 9)
           .attr("dy", ".35em")
           .attr("text-anchor", "start")
-          .text(function(d) {return d;}); //d is just each column name
+          .text(function(d) {return d.slice(5,6);}); //d is just each column name
 
     });
   }
 
-  let [redThresh, orangeThresh] = [50, 120];
+  let tooltip = d3.select("#stackedbars")
+      .append("div")
+      .style("opacity", 0)
+      .attr("class", "tooltip")
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "1px")
+      .style("border-radius", "5px")
+      .style("padding", "10px")
+      .style("position", "absolute");
 
-  let sliderRange = d3
-      .sliderBottom()
-      .min(0)
-      .max(1)
-      .width(300)
-      .tickFormat(d3.format('.2%'))
-      .ticks(5)
-      .default([0.20, 0.50])
-      .fill('#2196f3')
-      .on('end', val => {
-        redThresh = val[0] * 255;
-        orangeThresh = val[1] * 255;
-        renderPlot();
-      });
+  // Three function that change the tooltip when user hover / move / leave a cell
+  let mouseover = function(d) {
+    // console.log(d);
+    tooltip
+        .html(
+            `<b>${d.data.date}</b> <br>` +
+            colors.map(color => `${color.slice(5,6)}: ${d.data[color]} <br>`).join("") +
+            `<img src="${d.data.filename.slice(2)}" alt="NDVI image" />`)
+        .style("opacity", 1)
+  };
+  let mousemove = function() {
+    tooltip
+        .style("left", (d3.mouse(this)[0]+90) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+        .style("top", (d3.mouse(this)[1]+90) + "px")
+  };
+  let mouseleave = function() {
+    tooltip
+        .style("opacity", 0)
+  };
 
-  let gRange = d3
-      .select('div#slider-range')
-      .append('svg')
-      .attr('width', 500)
-      .attr('height', 100)
-      .append('g')
-      .attr('transform', 'translate(30,30)');
-
-  gRange.call(sliderRange);
-
-  d3.select('p#value-range').text(
-      sliderRange
-          .value()
-          .map(d3.format('.2%'))
-          .join('-')
-  );
 
 
   function type(d, i, columns) {
-    console.log(redThresh, orangeThresh);
-    let [red, orange, green] = [0, 0, 0];
+    const [greenStart, greenEnd] = [150, 256];
+    let greens = [0, 0, 0, 0];
     for (i = 1, t = 0; i < columns.length; ++i) {
-
-
-      // for each row, which is a d, cycle through the columns and add up all the elements
-      // in d, then assign that to t, which is a number from the +d[columns[i]]
-      if (columns[i] < redThresh) {
-        red += parseInt(d[columns[i]]);
-      } else if (columns[i] < orangeThresh) {
-        orange += parseInt(d[columns[i]]);
-      } else {
-        green += parseInt(d[columns[i]]);
+      if (columns[i] > greenStart) {
+        const index = Math.floor((columns[i] - greenStart) / (greenEnd - greenStart) * 4);
+        // console.log("index:", index);
+        greens[index] += parseInt(d[columns[i]]);
       }
       t += parseInt(d[columns[i]]);
     }
     // creates a new column in the data titled "total"
     d.filename = d.date;
-    d.date = d.date.slice(12, 22);
+    d.date = d.date.split('/')[2].slice(5, 15);
+    // console.log(d.date);
     d.total = 100;
-    d.red = red / t * 100;
-    d.orange = orange / t * 100;
-    d.green = green / t * 100;
+    d.green0 = greens[0] / t * 100;
+    d.green1 = greens[1] / t * 100;
+    d.green2 = greens[2] / t * 100;
+    d.green3 = greens[3] / t * 100;
+    d.greenAll = greens.reduce((pre, current) => pre += current);
     return d;
   }
 
