@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<style>
+    .axis path {
+        /*display: none;*/
+    }
+
+
+</style>
+<body>
+
+<div id="stackedbars">
+    <h1>Greenness of Different days</h1>
+    <svg id="stacked" width="1900" height="700"></svg></div>
+    <div class="row align-items-center">
+        <div class="col-sm"><div id="slider-range"></div></div>
+    </div>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://unpkg.com/d3-simple-slider"></script>
+
+<link
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous"
+/>
+
+<script>
+
+  // this section sets up the svg, margin, width and height
+
+  function renderPlot() {
+    var svg = d3.select("#stacked"),
+        margin = {top: 20, right: 180, bottom: 80, left: 40},
+        // sometimes width & height are defined separately here. Width and height are the overall
+        // dimensions that area alloted for the vix. The svg dimensions can be thought of as the
+        // area within the axes. Therefore the margins are used to make room for the axis text and
+        // legend. That's why the margins are subtracted from the svg height and width here
+        width = +svg.attr("width") - margin.left - margin.right,
+        height = +svg.attr("height") - margin.top - margin.bottom,
+        // this line moves the svg to the right and down from the origin (remember it's in the top
+        // left)
+        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    //scaleBand (https://github.com/d3/d3-scale#scaleBand) and rangeRound are used for categorical charts, like bar charts
+    // rangeRound will take the number of categories to be displayed on the x-axis as input and
+    // calculate the space each should be given within the range, which in this case
+    // is the width of the csv
+    var x = d3.scaleBand()
+        .rangeRound([0, width])
+        // this is the padding between the bars
+        .padding(0.3)
+        // this is takes the four bars as a whole and locates them as a group to the right or
+        // left on the x axis. a value of 1 moves them all the way to the right. Default is 0.5
+        .align(.3);
+
+    //  scaleLinear creates a continuous scale
+    var y = d3.scaleLinear()
+        .range([height, 0]);
+
+    // this will be used to set the colors. The age categories will be passed to this scale
+    // and each assigned on the the colors from schemeCategory20
+    // to assign custom colors,  remove the schemeCategory20 and un-comment the range with your
+    // own colors
+    var z = d3.scaleOrdinal().range(['#69B34C','#FAB733', '#FF4E11']);
+    // .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+    //(https://github.com/d3/d3-shape/blob/master/README.md#stack)
+    // stack creates an array which consists of an array for each of the series (categories) in the data
+    // each element in this array of arrays is a set of coordinates with the lower and upper bound for each
+    // data point. For stacked bar charts, this gives the lower and upper y values for each block
+    // of color
+    var stack = d3.stack();
+
+    // this is where the data is loaded, given the name "data" and checked for errors
+    d3.csv("result.csv", type, function(error, data) {
+      if (error) {throw error;}
+
+      data = data.sort((a, b) => a.date < b.date ? -1 : 1);
+
+      data17 = data.filter(d => d.date.startsWith("2017"));
+      data18 = data.filter(d => d.date.startsWith("2018"));
+      data19 = data.filter(d => d.date.startsWith("2019"));
+      data20 = data.filter(d => d.date.startsWith("2020"));
+      data21 = data.filter(d => d.date.startsWith("2021"));
+
+      data = data19.slice(0);
+
+// this takes the total (calculated later) of each category and sorts the categories
+// from greatest to smallest. This orders the bars biggest to smallest (left to right)
+//     data.sort(function(a, b) {return b.total - a.total; });
+
+// the domain is the input (domain= input, range = output)
+// the map function creates an array of the information, in this case the names of the
+// ethnicities. this array will be used to create the x axis categories
+      x.domain(data.map(function(d) { return d.date; }));
+
+// this tells d3 that y values will range from 0 to the max total value, not sure
+// what .nice() does?
+      y.domain([0, d3.max(data, function(d) { return d.total; })]).nice();
+
+// this removes the first column from the data, which is the ethnicity name column because
+// that shouldn't have it's own color, but each of the other columns should
+      z.domain(["green","orange", "red"]);
+      // console.log("cols", data.columns);
+
+      let tooltip = d3.select("#stackedbars")
+          .append("div")
+          .style("opacity", 0)
+          .attr("class", "tooltip")
+          .style("background-color", "white")
+          .style("border", "solid")
+          .style("border-width", "1px")
+          .style("border-radius", "5px")
+          .style("padding", "10px")
+          .style("position", "absolute");
+
+      // Three function that change the tooltip when user hover / move / leave a cell
+      let mouseover = function(d) {
+        // console.log(d);
+        tooltip
+            .html(
+                `<b>${d.data.date}</b> <br>` +
+                `Green: ${d.data.green} <br>` +
+                `Orange: ${d.data.orange} <br>` +
+                `Red: ${d.data.red} <br>` +
+                `<img src="${d.data.filename.slice(1)}" alt="NDVI image" />`)
+            .style("opacity", 1)
+      };
+      let mousemove = function() {
+        tooltip
+            .style("left", (d3.mouse(this)[0]+90) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+            .style("top", (d3.mouse(this)[1]+90) + "px")
+      };
+      let mouseleave = function() {
+        tooltip
+            .style("opacity", 0)
+      };
+
+
+
+
+// this is setting up the age series
+      g.selectAll(".serie")
+          //the keys for the stack are the columns minus the first column, which is removed
+          //using the "slice" method
+          .data(stack.keys(["green", "orange", "red"])(data))
+          // each age series is given it's own g
+          .enter().append("g")
+          .attr("class", "serie")
+          // the keys are passed to the z domain to be assigned a color
+          .attr("fill", function(d) { return z(d.key); })
+          .selectAll("rect")
+          .data(function(d) { return d; })
+          .enter().append("rect")
+          // why is .data needed here? why not just d? maybe because it was sliced off earlier?
+          .attr("x", function(d) { return x(d.data.date); })
+          // from the slice method, d is a pair of coordinates, the upper and lower bounds of the
+          // area to be displayed. This sets the upper y value
+          .attr("y", function(d) { return y(d[1]); })
+          // this calculates the height down from the starting point
+          .attr("height", function(d) {return y(d[0]) - y(d[1]); })
+          // .bandwidth is a method that calculates, what the width of each band should be. there is
+          // a default padding between the bars.
+          .attr("width", x.bandwidth())
+          .on("mouseover", mouseover)
+          .on("mousemove", mousemove)
+          .on("mouseleave", mouseleave);
+
+      // this places the x axis on the bottom and moves it so it's in the right place
+      g.append("g")
+          .attr("class", "axis axis--x")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x))
+          .selectAll("text")
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", "-.5em")
+          .attr("transform", "rotate(-90)");
+
+      // this places the y axis on the left and moves it so it's in the right place
+      g.append("g")
+          .attr("class", "axis axis--y")
+          // this says to have 10 ticks on the y axis and give them the "k" thousands notation
+          .call(d3.axisLeft(y).ticks(10, "s"))
+          // this part formats the title of the y axis ("population")
+          .append("text")
+
+          .attr("x", 2)// place it 2 pixels to the right of the y-axis
+          .attr("y", y(y.ticks(10).pop()))// make it level with the top number, this line appears to not be necessary
+          .attr("dy", "0.35")
+          .attr("text-anchor", "start")//sets where in relation to the y-axis the word starts. could be
+          // "middle" or "end" both of which would move it left
+          .attr("fill", "#000");
+      // .text("Percent");
+
+// making the legend
+      let legend = g.selectAll(".legend")
+          // the legend is made starting with the first column and working physically down from there.
+          // the .reverse is needed to put the 71+ at the top of the legend like it is in the graphic
+          // this pulls the column names minus the first column
+          .data(["green","orange", "red"])
+          .enter().append("g")
+          .attr("class", "legend")
+          .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
+          .style("font", "10px sans-serif");
+
+      // these are the actual rectangles it the legend
+      legend.append("rect")
+          .attr("x", width + 18) //placed 18 pixes from the right edge of the svg
+          .attr("width", 18)
+          .attr("height", 18)
+          .attr("fill", z);
+
+      legend.append("text")
+          .attr("x", width + 44)
+          .attr("y", 9)
+          .attr("dy", ".35em")
+          .attr("text-anchor", "start")
+          .text(function(d) {return d;}); //d is just each column name
+
+    });
+  }
+
+  let [redThresh, orangeThresh] = [50, 120];
+
+  let sliderRange = d3
+      .sliderBottom()
+      .min(0)
+      .max(1)
+      .width(300)
+      .tickFormat(d3.format('.2%'))
+      .ticks(5)
+      .default([0.20, 0.50])
+      .fill('#2196f3')
+      .on('end', val => {
+        redThresh = val[0] * 255;
+        orangeThresh = val[1] * 255;
+        renderPlot();
+      });
+
+  let gRange = d3
+      .select('div#slider-range')
+      .append('svg')
+      .attr('width', 500)
+      .attr('height', 100)
+      .append('g')
+      .attr('transform', 'translate(30,30)');
+
+  gRange.call(sliderRange);
+
+  d3.select('p#value-range').text(
+      sliderRange
+          .value()
+          .map(d3.format('.2%'))
+          .join('-')
+  );
+
+
+  function type(d, i, columns) {
+    console.log(redThresh, orangeThresh);
+    let [red, orange, green] = [0, 0, 0];
+    for (i = 1, t = 0; i < columns.length; ++i) {
+
+
+      // for each row, which is a d, cycle through the columns and add up all the elements
+      // in d, then assign that to t, which is a number from the +d[columns[i]]
+      if (columns[i] < redThresh) {
+        red += parseInt(d[columns[i]]);
+      } else if (columns[i] < orangeThresh) {
+        orange += parseInt(d[columns[i]]);
+      } else {
+        green += parseInt(d[columns[i]]);
+      }
+      t += parseInt(d[columns[i]]);
+    }
+    // creates a new column in the data titled "total"
+    d.filename = d.date;
+    d.date = d.date.slice(12, 22);
+    d.total = 100;
+    d.red = red / t * 100;
+    d.orange = orange / t * 100;
+    d.green = green / t * 100;
+    return d;
+  }
+
+</script>
+</body>
+</html>
