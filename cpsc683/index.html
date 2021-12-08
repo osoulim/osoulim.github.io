@@ -6,6 +6,15 @@
         /*display: none;*/
     }
 
+    .selectedImage {
+        margin: 5px;
+        border: black 1px;
+    }
+
+    .hidden {
+        display: none;
+    }
+
 
 </style>
 <body>
@@ -24,9 +33,9 @@
         </select>
     </label>
     <svg id="stacked" width="1900" height="700"></svg></div>
-<!--    <div class="row align-items-center">-->
-<!--        <div class="col-sm"><div id="slider-range"></div></div>-->
-<!--    </div>-->
+    <div class="row align-items-center" id="selectedDays" style="margin-left: 20px">
+
+    </div>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <!--<script src="https://unpkg.com/d3-simple-slider"></script>-->
@@ -63,7 +72,7 @@
     // rangeRound will take the number of categories to be displayed on the x-axis as input and
     // calculate the space each should be given within the range, which in this case
     // is the width of the csv
-    var x = d3.scaleBand()
+    let x = d3.scaleBand()
         .rangeRound([0, width])
         // this is the padding between the bars
         .padding(0.3)
@@ -72,14 +81,14 @@
         .align(.3);
 
     //  scaleLinear creates a continuous scale
-    var y = d3.scaleLinear()
+    let y = d3.scaleLinear()
         .range([height, 0]);
 
     // this will be used to set the colors. The age categories will be passed to this scale
     // and each assigned on the the colors from schemeCategory20
     // to assign custom colors,  remove the schemeCategory20 and un-comment the range with your
     // own colors
-    var z = d3.scaleOrdinal().range(['#397A4C', '#569358', '#77C063','#BEDB92']);
+    let z = d3.scaleOrdinal().range(['#397A4C', '#569358', '#77C063','#BEDB92']);
     // .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
     //(https://github.com/d3/d3-shape/blob/master/README.md#stack)
@@ -87,7 +96,7 @@
     // each element in this array of arrays is a set of coordinates with the lower and upper bound for each
     // data point. For stacked bar charts, this gives the lower and upper y values for each block
     // of color
-    var stack = d3.stack();
+    let stack = d3.stack();
 
     // this is where the data is loaded, given the name "data" and checked for errors
     d3.csv(`${farm}.csv`, type, function(error, data) {
@@ -108,7 +117,20 @@
 
       data = years[year].slice(0).filter(d => d.greenAll);
 
-// this takes the total (calculated later) of each category and sorts the categories
+
+      let selectedDays = d3.select("#selectedDays");
+      selectedDays.selectAll("*").remove();
+      data.forEach(d => {
+        const divId = `s${d.date}`;
+        selectedDays.append("div").html(
+            `<b>${d.date}</b> <br>` +
+            `<img src="${d.filename.slice(2)}" alt="NDVI image" />`)
+            .attr("id", divId)
+            .classed("selectedImage", true)
+            .classed("hidden", true)
+            .on("click", disappearImage);
+      });
+      // this takes the total (calculated later) of each category and sorts the categories
 // from greatest to smallest. This orders the bars biggest to smallest (left to right)
 //     data.sort(function(a, b) {return b.total - a.total; });
 
@@ -151,7 +173,8 @@
           .attr("width", x.bandwidth())
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
-          .on("mouseleave", mouseleave);
+          .on("mouseleave", mouseleave)
+          .on("click", mouseClick);
 
       // this places the x axis on the bottom and moves it so it's in the right place
       g.append("g")
@@ -237,6 +260,15 @@
   let mouseleave = function() {
     tooltip
         .style("opacity", 0)
+  };
+
+  let mouseClick = function (d) {
+    d3.select(`#s${d.data.date}`).classed("hidden", false);
+  };
+
+  let disappearImage = function () {
+    // console.log(this.id);
+    d3.select(`#${this.id}`).classed("hidden", true)
   };
 
 
