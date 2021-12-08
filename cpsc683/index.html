@@ -32,7 +32,7 @@
             <option value="third-2020"> Third-2020</option>
         </select>
     </label>
-    <svg id="stacked" width="1900" height="700"></svg></div>
+    <svg id="stacked" width="1900" height="600"></svg></div>
     <div class="row align-items-center" id="selectedDays" style="margin-left: 20px">
 
     </div>
@@ -123,12 +123,12 @@
       data.forEach(d => {
         const divId = `s${d.date}`;
         selectedDays.append("div").html(
-            `<b>${d.date}</b> <br>` +
+            `<b>${d.date}</b> <span style="float: right" onclick="disappearImage('${divId}')">[X]</span> <br>` +
             `<img src="${d.filename.slice(2)}" alt="NDVI image" />`)
             .attr("id", divId)
             .classed("selectedImage", true)
-            .classed("hidden", true)
-            .on("click", disappearImage);
+            .classed("hidden", true);
+            // .on("click", disappearImage);
       });
       // this takes the total (calculated later) of each category and sorts the categories
 // from greatest to smallest. This orders the bars biggest to smallest (left to right)
@@ -266,9 +266,9 @@
     d3.select(`#s${d.data.date}`).classed("hidden", false);
   };
 
-  let disappearImage = function () {
+  let disappearImage = function (id) {
     // console.log(this.id);
-    d3.select(`#${this.id}`).classed("hidden", true)
+    d3.select(`#${id}`).classed("hidden", true)
   };
 
 
