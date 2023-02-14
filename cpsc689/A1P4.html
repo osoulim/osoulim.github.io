@@ -1,0 +1,158 @@
+<html>
+
+<head>
+    <style>
+        body {
+            background-color: #1f1f1f;
+            color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 36px;
+            color: #f2f2f2;
+            margin: 20px;
+        }
+
+        .controls {
+            float: left;
+            width: 250px;
+            margin: 20px;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 2px solid #f2f2f2;
+            border-radius: 5px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 18px;
+            background-color: #f2f2f2;
+            color: #333;
+            border: 2px solid #f2f2f2;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        canvas {
+            float: right;
+            margin: 20px;
+            border: 2px solid #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Hypocycloid</h1>
+    <div style="width: 1100; margin: auto;">
+
+        <div class="controls">
+            <label for="R">Enter value of R:</label>
+            <input type="text" id="R" value="250">
+            <label for="r">Enter value of r:</label>
+            <input type="text" id="r" value="50">
+            <label for="r">Enter value of n:</label>
+            <input type="text" id="n" value="20">
+            <input type="checkbox" id="animate"> Animate?
+            <button onclick="start()">Draw</button>
+        </div>
+        <canvas id="myCanvas" width="700" height="700"></canvas>
+    </div>
+    <script>
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+
+        function clearCanvas(ctx) {
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        clearCanvas(ctx);
+
+        function start() {
+
+            const xOffset = canvas.width / 2;
+            const yOffset = canvas.height / 2;
+
+            const R = parseFloat(document.getElementById("R").value);
+            const r = parseFloat(document.getElementById("r").value);
+            const n = parseFloat(document.getElementById("n").value);
+            const animate = document.getElementById("animate").checked;
+
+            let i = 0;
+
+            if (animate === false) {
+                i = 2 * n * Math.PI;
+            }
+
+            function draw() {
+                clearCanvas(ctx);
+                ctx.beginPath();
+                ctx.arc(xOffset, yOffset, R, 0, 2 * Math.PI);
+                ctx.stroke();
+
+                ctx.beginPath();
+
+                for (var t = 0; t <= i; t += 0.05) {
+                    const x = (R - r) * Math.cos(t) + r * Math.cos((R - r) / r * t) + xOffset;
+                    const y = (R - r) * Math.sin(t) - r * Math.sin((R - r) / r * t) + yOffset;
+
+                    if (i == 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+
+                }
+
+                ctx.stroke();
+
+                const lastTime = t - 0.1;
+                const circleCenterX = (R - r) * Math.cos(lastTime) + xOffset;
+                const circleCenterY = (R - r) * Math.sin(lastTime) + yOffset;
+                const x = (R - r) * Math.cos(lastTime) + r * Math.cos((R - r) / r * lastTime) + xOffset;
+                const y = (R - r) * Math.sin(lastTime) - r * Math.sin((R - r) / r * lastTime) + yOffset;
+
+                if (animate) {
+                    ctx.beginPath();
+                    ctx.arc(circleCenterX, circleCenterY, r, 0, 2 * Math.PI);
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo(circleCenterX, circleCenterY);
+                    ctx.lineTo(x, y);
+                    ctx.strokeStyle = "red";
+                    ctx.stroke();
+
+                    ctx.strokeStyle = "black";
+
+                }
+
+
+                if (i < n * 2 * Math.PI) {
+                    if (document.getElementById("animate").checked) {
+                        requestAnimationFrame(draw);
+                        i += 0.05;
+                    }
+                }
+            }
+
+            requestAnimationFrame(draw);
+        }
+    </script>
+</body>
+
+</html>
